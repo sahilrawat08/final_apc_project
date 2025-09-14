@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${question.id != null ? 'Edit Question' : 'Add Question'}">Question Form - LMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">LMS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students">Students</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/faculty">Faculty</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/courses">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/assignments">Assignments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tests">Tests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/questions">Questions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/grades">Grades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notices">Notices</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/timetable">Timetable</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/forum">Forum</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 th:text="${question.id != null ? 'Edit Question' : 'Add New Question'}">Question Form</h1>
+            <a href="/questions" class="btn btn-secondary">Back to Questions</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/questions/save}" th:object="${question}" method="post">
+                    <div class="mb-3">
+                        <label for="test" class="form-label">Test</label>
+                        <select class="form-control" id="test" th:field="*{test.id}" required>
+                            <option value="">Select Test</option>
+                            <option th:each="test : ${tests}" th:value="${test.id}" th:text="${test.title}">Test Title</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="questionText" class="form-label">Question Text</label>
+                        <textarea class="form-control" id="questionText" th:field="*{questionText}" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="options" class="form-label">Options (A, B, C, D format)</label>
+                        <textarea class="form-control" id="options" th:field="*{options}" rows="4" placeholder="A) Option 1&#10;B) Option 2&#10;C) Option 3&#10;D) Option 4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="correctAnswer" class="form-label">Correct Answer</label>
+                        <input type="text" class="form-control" id="correctAnswer" th:field="*{correctAnswer}" placeholder="A" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Question</button>
+                    <a href="/questions" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>
