@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: admin-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/lms_db
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+
+logging:
+  level:
+    com.university.lms: DEBUG
+    org.springframework.security: DEBUG
