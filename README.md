@@ -1,293 +1,534 @@
-# Learning Management System (LMS)
+# Learning Management System (LMS) - Microservices Architecture
 
-A comprehensive Learning Management System built with Spring Boot 3.5.5, featuring course management, student enrollment, assignments, tests, grades, and discussion forums.
+A comprehensive Learning Management System built with Spring Boot microservices architecture, featuring separate services for administrators and students, JWT authentication, and MongoDB as the database.
 
-## 🚀 Features
+## 🏗️ Architecture Overview
 
-### Core Modules
-- **Dashboard** - Central hub with navigation to all features
-- **Students** - Manage student records and enrollments
-- **Faculty** - Manage faculty information
-- **Courses** - Create and manage course offerings
-- **Assignments** - Create assignments with deadlines
-- **Tests/Quizzes** - Create tests with multiple-choice questions
-- **Grades** - Record and view student grades
-- **Notices** - Post announcements visible on dashboard
-- **Timetable** - Weekly schedule for courses
-- **Discussion Forum** - Student discussions per course
+This LMS follows a microservices architecture with the following components:
+
+- **Admin Service** (Port 8081): Full CRUD control over courses, students, assignments, and reports
+- **Student Service** (Port 8082): Course viewing, enrollment, assignment submission, and profile management
+- **Common Module**: Shared models, DTOs, and utilities
+- **MongoDB**: Document database for data persistence
+- **JWT Authentication**: Token-based authentication with role-based access control
+
+## 📋 Features
+
+### Admin Functionalities
+- ✅ Create, edit, and delete courses
+- ✅ Manage student accounts and profiles
+- ✅ Create and manage assignments
+- ✅ Grade student submissions
+- ✅ View all submissions and generate reports
+- ✅ Enroll/unenroll students in courses
+- ✅ Dashboard with statistics
+
+### Student Functionalities
+- ✅ View available courses
+- ✅ Enroll in courses
+- ✅ View enrolled courses and assignments
+- ✅ Submit assignments
+- ✅ View grades and feedback
+- ✅ Update personal profile
+- ✅ Dashboard with personal statistics
 
 ### Technical Features
-- **Spring Boot 3.5.5** with Java 24
-- **Spring Data JPA** for database operations
-- **Thymeleaf** for server-side rendering
-- **MySQL** database with auto-generated schema
-- **Bootstrap 5** for responsive UI
-- **Maven** build tool
-- **Preloaded sample data** for immediate testing
+- ✅ JWT-based authentication with role separation
+- ✅ MongoDB document database
+- ✅ RESTful API design
+- ✅ Microservices architecture
+- ✅ Thymeleaf web interface
+- ✅ Docker deployment support
+- ✅ Sample data initialization
 
-## 🛠️ Prerequisites
+## 🚀 Quick Start
 
-- **Java 24** or higher
-- **Maven 3.6+**
-- **MySQL 8.0+**
-- **IDE** (IntelliJ IDEA, Eclipse, or VS Code)
+### Prerequisites
+- Java 17 or higher
+- Maven 3.6+
+- MongoDB 7.0+
+- Docker (optional)
 
-## 📋 Installation & Setup
+### 1. Clone and Setup
 
-### 1. Clone the Repository
 ```bash
 git clone <repository-url>
-cd lms
+cd lms-microservices
 ```
 
-### 2. Database Setup
+### 2. Start MongoDB
 
-#### Install MySQL
-- Download and install MySQL from [mysql.com](https://dev.mysql.com/downloads/mysql/)
-- Start MySQL service
-- Create a database user (optional, can use root)
-
-#### Configure Database Connection
-Update `src/main/resources/application.properties`:
-
-```properties
-# Database Configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/lms_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-spring.datasource.username=root
-spring.datasource.password=your_mysql_password
-```
-
-**Important:** Replace `your_mysql_password` with your actual MySQL root password.
-
-### 3. Build and Run
-
-#### Using Maven
+**Option A: Using Docker**
 ```bash
-# Clean and compile
+cd docker
+docker-compose up mongodb -d
+```
+
+**Option B: Local Installation**
+```bash
+# Install MongoDB (Ubuntu/Debian)
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+
+# Start MongoDB
+sudo mkdir -p /data/db
+sudo chown mongodb:mongodb /data/db
+sudo -u mongodb mongod --dbpath /data/db --port 27017 --fork --logpath /var/log/mongodb.log
+```
+
+### 3. Build the Project
+
+```bash
+# Build common module first
+cd common
+mvn clean install -DskipTests
+
+# Build admin service
+cd ../admin-service
 mvn clean compile
 
-# Run the application
+# Build student service
+cd ../student-service
+mvn clean compile
+```
+
+### 4. Run the Services
+
+**Terminal 1 - Admin Service:**
+```bash
+cd admin-service
 mvn spring-boot:run
 ```
 
-#### Using IDE
-1. Import the project into your IDE
-2. Ensure Maven dependencies are resolved
-3. Run `LmsApplication.java` as a Java application
-
-### 4. Access the Application
-
-Open your browser and navigate to:
-```
-http://localhost:8080
+**Terminal 2 - Student Service:**
+```bash
+cd student-service
+mvn spring-boot:run
 ```
 
-The application will automatically:
-- Create the database `lms_db` if it doesn't exist
-- Generate all required tables
-- Load sample data (students, faculty, courses, etc.)
+### 5. Access the Applications
 
-## 🎯 Quick Start Guide
+- **Admin Portal**: http://localhost:8081/admin/login
+- **Student Portal**: http://localhost:8082/student/login
+- **Admin API**: http://localhost:8081/api/admin/*
+- **Student API**: http://localhost:8082/api/student/*
 
-### First Login
-The application opens directly to the dashboard (no authentication required for now).
+## 👥 Default Accounts
 
-### Sample Data Included
-The system comes pre-loaded with:
-- **5 Faculty members** across different departments
-- **10 Students** with various roll numbers
-- **10 Courses** covering different subjects
-- **10 Assignments** with deadlines
-- **10 Tests** with sample questions
-- **Sample grades** for students
-- **8 Notices** for announcements
-- **Weekly timetable** for all courses
-- **Forum posts** for course discussions
+The system comes with pre-configured accounts:
 
-### Navigation
-Use the top navigation bar to access different modules:
-- **Dashboard** - Overview and recent notices
-- **Students** - Add, edit, delete student records
-- **Faculty** - Manage faculty information
-- **Courses** - Create courses and assign faculty
-- **Assignments** - Create assignments with deadlines
-- **Tests** - Create tests and add questions
-- **Grades** - Record student grades
-- **Notices** - Post announcements
-- **Timetable** - Schedule course timings
-- **Forum** - Course-specific discussions
+### Admin Account
+- **Username**: admin
+- **Password**: admin123
+- **Access**: http://localhost:8081/admin/login
 
-## 🏗️ Project Structure
+### Student Accounts
+- **Student 1**:
+  - Username: STU001
+  - Password: password123
+  - Name: John Doe
+  - Department: Computer Science
 
+- **Student 2**:
+  - Username: STU002
+  - Password: password123
+  - Name: Jane Smith
+  - Department: Mathematics
+
+## 🔌 API Documentation
+
+### Authentication Endpoints
+
+#### Login (Both Services)
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
 ```
-src/main/java/com/university/lms/
-├── controller/          # Web controllers for all modules
-├── service/            # Business logic layer
-├── repository/         # JPA repositories
-├── model/              # JPA entities
-└── LmsApplication.java # Main application class
 
-src/main/resources/
-├── templates/          # Thymeleaf HTML templates
-│   ├── dashboard.html
-│   ├── students/
-│   ├── faculty/
-│   ├── courses/
-│   ├── assignments/
-│   ├── tests/
-│   ├── questions/
-│   ├── grades/
-│   ├── notices/
-│   ├── timetable/
-│   └── forum/
-├── static/             # CSS and JavaScript files
-│   ├── css/style.css
-│   └── js/script.js
-├── application.properties
-└── data.sql           # Sample data
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiJ9...",
+    "username": "admin",
+    "role": "ADMIN",
+    "userId": "64a1b2c3d4e5f6789abc0001"
+  }
+}
+```
+
+### Admin Service APIs (Port 8081)
+
+#### Courses Management
+```http
+GET    /api/admin/courses              # Get all courses
+POST   /api/admin/courses              # Create new course
+GET    /api/admin/courses/{id}         # Get course by ID
+PUT    /api/admin/courses/{id}         # Update course
+DELETE /api/admin/courses/{id}         # Delete course
+POST   /api/admin/courses/{courseId}/enroll/{studentId}    # Enroll student
+DELETE /api/admin/courses/{courseId}/enroll/{studentId}    # Unenroll student
+```
+
+#### Students Management
+```http
+GET    /api/admin/students             # Get all students
+POST   /api/admin/students             # Create new student
+GET    /api/admin/students/{id}        # Get student by ID
+PUT    /api/admin/students/{id}        # Update student
+DELETE /api/admin/students/{id}        # Delete student
+GET    /api/admin/students/department/{dept}  # Get students by department
+```
+
+#### Assignments Management
+```http
+GET    /api/admin/assignments          # Get all assignments
+POST   /api/admin/assignments          # Create new assignment
+GET    /api/admin/assignments/{id}     # Get assignment by ID
+PUT    /api/admin/assignments/{id}     # Update assignment
+DELETE /api/admin/assignments/{id}     # Delete assignment
+GET    /api/admin/assignments/course/{courseId}  # Get assignments by course
+```
+
+#### Submissions Management
+```http
+GET    /api/admin/submissions          # Get all submissions
+GET    /api/admin/submissions/{id}     # Get submission by ID
+GET    /api/admin/submissions/assignment/{assignmentId}  # Get submissions by assignment
+GET    /api/admin/submissions/student/{studentId}       # Get submissions by student
+PUT    /api/admin/submissions/{id}/grade                 # Grade submission
+DELETE /api/admin/submissions/{id}     # Delete submission
+```
+
+### Student Service APIs (Port 8082)
+
+#### Courses
+```http
+GET    /api/student/courses            # Get all available courses
+GET    /api/student/courses/{id}       # Get course details
+GET    /api/student/courses/enrolled   # Get enrolled courses
+POST   /api/student/courses/{courseId}/enroll      # Enroll in course
+DELETE /api/student/courses/{courseId}/unenroll    # Unenroll from course
+```
+
+#### Assignments
+```http
+GET    /api/student/assignments        # Get all active assignments
+GET    /api/student/assignments/{id}   # Get assignment details
+GET    /api/student/assignments/course/{courseId}  # Get assignments by course
+```
+
+#### Submissions
+```http
+GET    /api/student/submissions                    # Get my submissions
+GET    /api/student/submissions/assignment/{assignmentId}  # Get my submission for assignment
+POST   /api/student/submissions/assignment/{assignmentId}  # Submit assignment
+PUT    /api/student/submissions/{id}               # Update submission
+```
+
+#### Profile
+```http
+GET    /api/student/profile            # Get my profile
+PUT    /api/student/profile            # Update my profile
 ```
 
 ## 🗄️ Database Schema
 
-### Core Entities
-- **Student** (id, name, rollNumber, department)
-- **Faculty** (id, name, department, contact)
-- **Course** (id, title, description, faculty)
-- **Assignment** (id, course, title, deadline, description)
-- **Test** (id, course, title)
-- **Question** (id, test, questionText, options, correctAnswer)
-- **Grade** (id, student, course, grade)
-- **Notice** (id, title, message, createdAt)
-- **Timetable** (id, course, day, startTime, endTime)
-- **ForumPost** (id, course, student, message, createdAt)
+The system uses MongoDB with the following collections:
 
-### Relationships
-- Many-to-Many: Students ↔ Courses
-- One-to-Many: Faculty → Courses
-- One-to-Many: Course → Assignments, Tests, Grades, Timetables, ForumPosts
-- One-to-Many: Test → Questions
-
-## 🎨 UI Features
-
-- **Responsive Design** - Works on desktop, tablet, and mobile
-- **Bootstrap 5** - Modern, clean interface
-- **Navigation Bar** - Easy access to all modules
-- **Dashboard Cards** - Quick navigation to features
-- **Data Tables** - Sortable and searchable lists
-- **Forms** - User-friendly input forms
-- **Alerts** - Success/error messages
-- **Modals** - Confirmation dialogs
-
-## 🔧 Configuration Options
-
-### Application Properties
-```properties
-# Server
-server.port=8080
-
-# Database
-spring.datasource.url=jdbc:mysql://localhost:3306/lms_db
-spring.datasource.username=root
-spring.datasource.password=password
-
-# JPA
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-
-# Thymeleaf
-spring.thymeleaf.cache=false
-
-# Data Initialization
-spring.sql.init.mode=always
-spring.sql.init.data-locations=classpath:data.sql
+### Users Collection
+```json
+{
+  "_id": "ObjectId",
+  "username": "String",
+  "email": "String",
+  "password": "String (hashed)",
+  "firstName": "String",
+  "lastName": "String",
+  "role": "ADMIN|STUDENT",
+  "createdAt": "Date",
+  "updatedAt": "Date",
+  "enabled": "Boolean"
+}
 ```
 
-## 🚨 Troubleshooting
+### Students Collection
+```json
+{
+  "_id": "ObjectId",
+  "userId": "String (reference to users)",
+  "studentId": "String (unique)",
+  "firstName": "String",
+  "lastName": "String",
+  "email": "String",
+  "department": "String",
+  "phoneNumber": "String",
+  "enrolledCourses": ["String (course IDs)"],
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+```
+
+### Courses Collection
+```json
+{
+  "_id": "ObjectId",
+  "title": "String",
+  "description": "String",
+  "instructorId": "String",
+  "instructorName": "String",
+  "enrolledStudents": ["String (student IDs)"],
+  "maxStudents": "Number",
+  "status": "ACTIVE|INACTIVE|COMPLETED",
+  "createdAt": "Date",
+  "updatedAt": "Date",
+  "startDate": "Date",
+  "endDate": "Date"
+}
+```
+
+### Assignments Collection
+```json
+{
+  "_id": "ObjectId",
+  "courseId": "String",
+  "title": "String",
+  "description": "String",
+  "dueDate": "Date",
+  "maxScore": "Number",
+  "status": "ACTIVE|INACTIVE|COMPLETED",
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+```
+
+### Submissions Collection
+```json
+{
+  "_id": "ObjectId",
+  "assignmentId": "String",
+  "studentId": "String",
+  "studentName": "String",
+  "content": "String",
+  "attachmentUrl": "String",
+  "grade": "Number",
+  "feedback": "String",
+  "status": "SUBMITTED|GRADED|LATE_SUBMISSION",
+  "submittedAt": "Date",
+  "gradedAt": "Date"
+}
+```
+
+## 🐳 Docker Deployment
+
+### Using Docker Compose
+
+```bash
+cd docker
+docker-compose up -d
+```
+
+This will start:
+- MongoDB on port 27017
+- Admin Service on port 8081
+- Student Service on port 8082
+
+### Manual Docker Build
+
+**Build Images:**
+```bash
+# Build admin service
+cd admin-service
+docker build -t lms-admin-service .
+
+# Build student service
+cd ../student-service
+docker build -t lms-student-service .
+```
+
+**Run Containers:**
+```bash
+# Start MongoDB
+docker run -d --name lms-mongodb -p 27017:27017 mongo:7.0
+
+# Start Admin Service
+docker run -d --name lms-admin-service -p 8081:8081 \
+  --link lms-mongodb:mongodb \
+  -e SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/lms_db \
+  lms-admin-service
+
+# Start Student Service
+docker run -d --name lms-student-service -p 8082:8082 \
+  --link lms-mongodb:mongodb \
+  -e SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/lms_db \
+  lms-student-service
+```
+
+## 🔧 Configuration
+
+### Application Properties
+
+**Admin Service (application.yml):**
+```yaml
+server:
+  port: 8081
+
+spring:
+  application:
+    name: admin-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/lms_db
+  thymeleaf:
+    cache: false
+```
+
+**Student Service (application.yml):**
+```yaml
+server:
+  port: 8082
+
+spring:
+  application:
+    name: student-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/lms_db
+  thymeleaf:
+    cache: false
+```
+
+### JWT Configuration
+
+JWT tokens are configured with:
+- **Secret Key**: "mySecretKeyForJWTTokenGenerationThatIsLongEnoughForHS256"
+- **Expiration**: 5 hours
+- **Algorithm**: HS256
+
+To change JWT settings, modify the `JwtUtil` class in the common module.
+
+## 🧪 Testing
+
+### Running Unit Tests
+
+```bash
+# Test common module
+cd common
+mvn test
+
+# Test admin service
+cd ../admin-service
+mvn test
+
+# Test student service
+cd ../student-service
+mvn test
+```
+
+### API Testing with cURL
+
+**Login as Admin:**
+```bash
+curl -X POST http://localhost:8081/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+```
+
+**Create a Course (Admin):**
+```bash
+curl -X POST http://localhost:8081/api/admin/courses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "title": "New Course",
+    "description": "Course description",
+    "instructorName": "Dr. Smith",
+    "maxStudents": 30,
+    "status": "ACTIVE"
+  }'
+```
+
+**Login as Student:**
+```bash
+curl -X POST http://localhost:8082/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"STU001","password":"password123"}'
+```
+
+**Enroll in Course (Student):**
+```bash
+curl -X POST http://localhost:8082/api/student/courses/COURSE_ID/enroll \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-#### 1. Database Connection Error
-```
-Error: Access denied for user 'root'@'localhost'
-```
-**Solution:** Update MySQL credentials in `application.properties`
+1. **MongoDB Connection Error**
+   - Ensure MongoDB is running on port 27017
+   - Check MongoDB logs: `tail -f /var/log/mongodb.log`
 
-#### 2. Port Already in Use
-```
-Error: Port 8080 was already in use
-```
-**Solution:** Change port in `application.properties` or stop the conflicting service
+2. **Port Already in Use**
+   - Check if ports 8081/8082 are available
+   - Kill existing processes: `lsof -ti:8081 | xargs kill -9`
 
-#### 3. Maven Build Issues
-```
-Error: Could not resolve dependencies
-```
-**Solution:** 
-```bash
-mvn clean install
-mvn dependency:resolve
-```
+3. **JWT Token Issues**
+   - Tokens expire after 5 hours
+   - Ensure correct Authorization header format: `Bearer <token>`
 
-#### 4. MySQL Not Running
-```
-Error: Communications link failure
-```
-**Solution:** Start MySQL service:
-- Windows: Services → MySQL80 → Start
-- macOS: `brew services start mysql`
-- Linux: `sudo systemctl start mysql`
+4. **Build Failures**
+   - Ensure Java 17+ is installed
+   - Build common module first: `cd common && mvn clean install`
 
-### Logs
-Check application logs for detailed error information:
-```bash
-tail -f logs/spring.log
-```
+### Logs Location
 
-## 🔮 Future Enhancements
+- **Admin Service**: Console output or `./logs/admin-service.log`
+- **Student Service**: Console output or `./logs/student-service.log`
+- **MongoDB**: `/var/log/mongodb.log`
 
-- **Authentication & Authorization** - User login and role-based access
-- **File Upload** - Assignment submissions and course materials
-- **Email Notifications** - Assignment reminders and grade notifications
-- **Calendar Integration** - Export timetable to calendar apps
-- **Mobile App** - React Native or Flutter mobile application
-- **API Endpoints** - REST API for mobile app integration
-- **Advanced Analytics** - Student performance analytics
-- **Video Integration** - Embedded video lectures
-- **Real-time Chat** - Live discussion features
+## 📊 Sample Data
 
-## 📝 Development Notes
+The system initializes with sample data including:
 
-### Adding New Features
-1. Create entity in `model/` package
-2. Create repository in `repository/` package
-3. Create service in `service/` package
-4. Create controller in `controller/` package
-5. Create templates in `templates/` directory
-6. Update navigation in templates
+- **1 Admin User**: admin/admin123
+- **2 Student Users**: STU001/password123, STU002/password123
+- **3 Sample Courses**: Introduction to Programming, Data Structures, Calculus I
+- **2 Sample Assignments**: Hello World Program, Binary Search Implementation
 
-### Database Changes
-- Modify entities in `model/` package
-- Update `data.sql` for sample data
-- Restart application to apply schema changes
+## 🔐 Security
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+- Passwords are hashed using BCrypt
+- JWT tokens for stateless authentication
+- Role-based access control (ADMIN/STUDENT)
+- CORS enabled for development
+- Input validation on all endpoints
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 📞 Support
 
-For issues and questions:
+For support and questions:
 - Create an issue in the repository
 - Check the troubleshooting section
-- Review application logs for errors
+- Review the API documentation
 
 ---
 
